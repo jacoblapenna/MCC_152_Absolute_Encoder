@@ -5,6 +5,7 @@ re = mcc152(1)
 
 try:
     while True:
-        print(re.dio_input_read_port())
+        position = re.dio_input_read_port()
+        print("{0} : {0:08b}".format(position))
 except KeyboardInterrupt:
     pass

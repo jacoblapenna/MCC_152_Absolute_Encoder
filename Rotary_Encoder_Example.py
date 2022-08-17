@@ -5,6 +5,6 @@ re = mcc152(1)
 
 try:
     while True:
-        print(re.dio_input_read_tuple())
+        print(re.dio_input_read_port())
 except KeyboardInterrupt:
     pass

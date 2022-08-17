@@ -11,7 +11,7 @@ try:
         if position == last_position:
             pass
         else:
-            print("{str(0).ljust(3)} : {0:08b}".format(position))
+            print(f"{str(position).ljust(3)}" + " : {0:08b}".format(position))
             last_position = position
 except KeyboardInterrupt:
     pass

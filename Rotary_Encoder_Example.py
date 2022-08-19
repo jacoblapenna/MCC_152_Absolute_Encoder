@@ -15,11 +15,11 @@ def g2b(num):
 try:
     while True:
         pos = re.dio_input_read_port()
-        g2b_pos = g2b(pos)
-        if g2b_pos == last_pos:
+        g2b(pos)
+        if pos == last_pos:
             pass
         else:
-            print(f"{str(g2b_pos).ljust(3)}" + " : {0:08b}".format(pos))
-            last_pos = g2b_pos
+            print(f"{str(pos).ljust(3)}" + " : {0:08b}".format(pos))
+            last_pos = pos
 except KeyboardInterrupt:
     pass

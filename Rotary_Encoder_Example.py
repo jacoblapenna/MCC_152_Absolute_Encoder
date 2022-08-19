@@ -12,10 +12,12 @@ def g2b(num):
     num ^= num >> 1
     return num
 
+g2b_hashmap = {g : g2b(g) for g in range(256)}
+
 try:
     while True:
         pos = re.dio_input_read_port()
-        bcd = g2b(pos)
+        bcd = g2b_hashmap(pos)
         if bcd == last_pos:
             pass
         else:

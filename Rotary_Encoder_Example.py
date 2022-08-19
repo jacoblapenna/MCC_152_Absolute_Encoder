@@ -1,8 +1,9 @@
-from daqhats import mcc152, HatError, HatIDs, hat_list
+from daqhats import mcc152, HatError, HatIDs, hat_list, DIOConfigItem
 
 # create hat instance for rotary encoder
 re = mcc152(1)
 re.dio_reset()
+re.dio_config_write_port(DIOConfigItem.INPUT_INVERT, 1)
 last_pos = None
 
 def g2b(num):

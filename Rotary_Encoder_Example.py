@@ -19,6 +19,7 @@ class Encoder:
         # initialize DAQ
         self._mcc152.dio_reset()
         self._mcc152.dio_config_write_port(DIOConfigItem.INPUT_INVERT, int(b"11111111", 2))
+        self._mcc152.dio_config_write_port(DIOConfigItem.INPUT_LATCH, int(b"11111111", 2))
         self._mcc152.dio_config_write_port(DIOConfigItem.INT_MASK, int(b"01111111", 2))
 
 
@@ -37,7 +38,8 @@ class Encoder:
         One revolution occurs when the MSB goes high to low.
         This is a + rotation if
         """
-        print('-' * 20)
+        pos = self._mcc152.dio_input_read_port()
+        print('-' * 6 + "{0:08b}".format(pos) + '-' * 6)
 
 
     def track_rotation(self):

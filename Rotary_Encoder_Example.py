@@ -22,43 +22,43 @@ class Encoder:
         self._mcc152.dio_config_write_bit(7, DIOConfigItem.INT_MASK, 0)
 
 
-        def _g2b(self, num):
-            """
-            Private method to convert a gray coded integer to a binary coded integer.
-            """
-            num ^= num >> 4
-            num ^= num >> 2
-            num ^= num >> 1
-            return num
+    def _g2b(self, num):
+        """
+        Private method to convert a gray coded integer to a binary coded integer.
+        """
+        num ^= num >> 4
+        num ^= num >> 2
+        num ^= num >> 1
+        return num
 
 
-        def _count_rev(self, direction):
-            """
-            One revolution occurs when the MSB goes high to low.
-            This is a + rotation if
-            """
-            print('-' * 20)
+    def _count_rev(self, direction):
+        """
+        One revolution occurs when the MSB goes high to low.
+        This is a + rotation if
+        """
+        print('-' * 20)
 
 
-        def track_rotation(self):
-            last_pos = None
-            try:
-                while True:
-                    pos = self._mcc152.dio_input_read_port()
-                    bcd = self._g2b_hashmap[pos]
-                    if bcd == last_pos:
-                        pass
-                    else:
-                        angle = str(round(bcd * self.d_theta_degrees, 5))
-                        theta_whole, theta_decimal = angle.split('.')
-                        s = "{0:08b}".format(pos)
-                        s += " : "
-                        s += f"{theta_whole.rjust(3)}."
-                        s += f"{theta_decimal.ljust(5)}"
-                        print(s)
-                        last_pos = bcd
-            except KeyboardInterrupt:
-                return
+    def track_rotation(self):
+        last_pos = None
+        try:
+            while True:
+                pos = self._mcc152.dio_input_read_port()
+                bcd = self._g2b_hashmap[pos]
+                if bcd == last_pos:
+                    pass
+                else:
+                    angle = str(round(bcd * self.d_theta_degrees, 5))
+                    theta_whole, theta_decimal = angle.split('.')
+                    s = "{0:08b}".format(pos)
+                    s += " : "
+                    s += f"{theta_whole.rjust(3)}."
+                    s += f"{theta_decimal.ljust(5)}"
+                    print(s)
+                    last_pos = bcd
+        except KeyboardInterrupt:
+            return
 
 if __name__ == '__main__':
     encoder = Encoder()

@@ -53,7 +53,6 @@ class Encoder:
             self.rotations -= 1
         elif bcd == 0:
             self.rotations += 1
-        print(f"Rotation count: {self.rotations}")
 
 
     def _show_angle(self):

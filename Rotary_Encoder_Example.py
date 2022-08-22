@@ -19,7 +19,7 @@ class Encoder:
         # initialize DAQ
         self._mcc152.dio_reset()
         self._mcc152.dio_config_write_port(DIOConfigItem.INPUT_INVERT, int(b"11111111", 2))
-        self._mcc152.dio_config_write_port(DIOConfigItem.INT_MASK, int(b"11111110", 2))
+        self._mcc152.dio_config_write_port(DIOConfigItem.INT_MASK, int(b"01111111", 2))
 
 
     def _g2b(self, num):

@@ -38,6 +38,10 @@ class Encoder:
         return num
 
 
+    def _bcd2angle(self, bcd):
+        return bcd * self.d_theta_degrees
+
+
     def _count_rev(self, direction):
         """
         One revolution occurs when the MSB goes high to low.
@@ -53,11 +57,10 @@ class Encoder:
 
 
     def _show_angle(self):
-        angle = round(self.position * self.d_theta_degrees, 5)
-        print(angle)
+        print("{:.5f}".format(round(self.position, 5)).rjust(15))
 
 
-    def _update_position(self, bcd):
+    def _update_position(self, angle):
         if self.rotations < 0:
             self.position -= abs(self.rotations * 360) - bcd - self._bcd_offset
         else:
@@ -70,12 +73,12 @@ class Encoder:
         try:
             while True:
                 pos = self._mcc152.dio_input_read_port()
-                bcd = self._g2b_hashmap[pos]
-                if bcd == last_pos:
+                angle = self._bcd2angle(self._g2b_hashmap[pos])
+                if angle == last_pos:
                     pass
                 else:
-                    self._update_position(bcd)
-                    last_pos = bcd
+                    self._update_position(angle)
+                    last_pos = angle
         except KeyboardInterrupt:
             return
 

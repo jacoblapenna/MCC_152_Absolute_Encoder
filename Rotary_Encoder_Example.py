@@ -1,6 +1,8 @@
 from daqhats import mcc152, HatError, HatIDs, hat_list, DIOConfigItem, interrupt_callback_enable
 
-import time
+# import threading
+# presently self.rotations is not thread safe as it is read in self._update_position and written to in self._count_rev. Odd stuff occurrs when it read while being written to.
+from threading import Lock
 
 class Encoder:
 
@@ -15,6 +17,7 @@ class Encoder:
         self.rotations = 0
         self.d_theta_degrees = d_theta_degrees = 360/self.resolution
         self._g2b_hashmap = {g : self._g2b(g) for g in range(self.resolution)}
+        self._lock = Lock()
 
         # set interupt callback
         interrupt_callback_enable(self._count_rev, self.direction)
@@ -49,12 +52,14 @@ class Encoder:
         One revolution occurs when the MSB goes high to low.
         This is a + rotation if
         """
+        self._lock.acquire()
         pos = self._mcc152.dio_input_read_port()
         bcd = self._g2b_hashmap[pos]
         if bcd == 255:
             self.rotations -= 1
         elif bcd == 0:
             self.rotations += 1
+        self._lock.release()
 
 
     def _show_angle(self):
@@ -62,10 +67,12 @@ class Encoder:
 
 
     def _update_position(self, angle):
+        self._lock.acquire()
         if self.rotations < 0:
             self.position = self.rotations * 360 + angle - self._degrees_offset
         else:
             self.position = (angle + self.rotations * 360) - self._degrees_offset
+        self._lock.release()
         self._show_angle()
 
 

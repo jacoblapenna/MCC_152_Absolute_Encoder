@@ -24,7 +24,7 @@ class Encoder:
         self._mcc152.dio_config_write_port(DIOConfigItem.INT_MASK, int(b"01111111", 2))
 
         # get initial offset
-        self._bcd_offset = self._g2b_hashmap[self._mcc152.dio_input_read_port()]
+        self._degrees_offset = self._bcd2angle(self._g2b_hashmap[self._mcc152.dio_input_read_port()])
         self.position = 0.0
 
 

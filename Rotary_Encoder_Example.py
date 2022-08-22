@@ -61,9 +61,9 @@ class Encoder:
 
     def _update_position(self, angle):
         if self.rotations < 0:
-            self.position -= abs(self.rotations * 360) - angle - self._bcd_offset
+            self.position -= abs(self.rotations * 360) - angle - self._degrees_offset
         else:
-            self.position = (angle + self.rotations * 360) - self._bcd_offset
+            self.position = (angle + self.rotations * 360) - self._degrees_offset
         self._show_angle()
 
 

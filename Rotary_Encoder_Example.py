@@ -23,6 +23,10 @@ class Encoder:
         self._mcc152.dio_config_write_port(DIOConfigItem.INPUT_LATCH, int(b"11111111", 2))
         self._mcc152.dio_config_write_port(DIOConfigItem.INT_MASK, int(b"01111111", 2))
 
+        # get initial offset
+        self._bcd_offset = self._g2b_hashmap[self._mcc152.dio_input_read_port()]
+        self.position = 0.0
+
 
     def _g2b(self, num):
         """
@@ -40,11 +44,22 @@ class Encoder:
         This is a + rotation if
         """
         pos = self._mcc152.dio_input_read_port()
-        if pos == 255:
+        bcd = self._g2b_hashmap[pos]
+        if bcd == 255:
             self.rotations -= 1
-        elif pos == 0:
+        elif bcd == 0:
             self.rotations += 1
         print('-' * 8 + f"{pos}".rjust(3) + '-' * 8)
+
+
+    def _show_angle(self):
+        angle = round(self.position * self.d_theta_degrees, 5)
+        print(angle)
+
+
+    def _update_position(self, bcd):
+        self.position = bcd - self._bcd_offset
+        self._show_angle(self)
 
 
     def track_rotation(self):
@@ -56,14 +71,7 @@ class Encoder:
                 if bcd == last_pos:
                     pass
                 else:
-                    angle = str(round(bcd * self.d_theta_degrees, 5))
-                    theta_whole, theta_decimal = angle.split('.')
-                    s = "{0:08b}".format(pos)
-                    s += " : "
-                    s += f"{str(self.rotations).rjust(5)} + "
-                    s += f"{theta_whole.rjust(3)}."
-                    s += f"{theta_decimal.ljust(5)}"
-                    print(s)
+                    self._update_position(bcd)
                     last_pos = bcd
         except KeyboardInterrupt:
             return

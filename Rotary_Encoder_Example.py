@@ -1,7 +1,5 @@
 from daqhats import mcc152, HatError, HatIDs, hat_list, DIOConfigItem, interrupt_callback_enable
 
-# import threading
-# presently self.rotations is not thread safe as it is read in self._update_position and written to in self._count_rev. Odd stuff occurrs when it read while being written to.
 from threading import Lock
 
 class Encoder:
@@ -44,13 +42,15 @@ class Encoder:
 
 
     def _bcd2angle(self, bcd):
+        """
+        Private method to convert a BCD integer to angular position.
+        """
         return bcd * self.d_theta_degrees
 
 
     def _count_rev(self, direction):
         """
-        One revolution occurs when the MSB goes high to low.
-        This is a + rotation if
+        Keep track of revolutions past BCD=255/0 point.
         """
         self._lock.acquire()
         pos = self._mcc152.dio_input_read_port()
@@ -63,10 +63,16 @@ class Encoder:
 
 
     def _show_angle(self):
+        """
+        Print the most recent angular position in a nice format.
+        """
         print("{:.5f}".format(round(self.position, 5)).rjust(15))
 
 
     def _update_position(self, angle):
+        """
+        Update the encoder's angular position.
+        """
         self._lock.acquire()
         if self.rotations < 0:
             self.position = self.rotations * 360 + angle - self._degrees_offset
@@ -77,6 +83,9 @@ class Encoder:
 
 
     def track_rotation(self):
+        """
+        Track the encoder's location until KeyboardInterrupt.
+        """
         last_pos = None
         try:
             while True:

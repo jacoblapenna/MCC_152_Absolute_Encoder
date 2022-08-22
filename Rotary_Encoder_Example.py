@@ -10,6 +10,7 @@ class Encoder:
         # create instance attributes
         self.direction = None # None, "CCW", or "CW"
         self.resolution = resolution
+        self.rotations = 0
         self.d_theta_degrees = d_theta_degrees = 360/self.resolution
         self._g2b_hashmap = {g : self._g2b(g) for g in range(self.resolution)}
 
@@ -39,6 +40,10 @@ class Encoder:
         This is a + rotation if
         """
         pos = self._mcc152.dio_input_read_port()
+        if pos == 255:
+            self.rotations -= 1
+        elif pos == 0:
+            self.rotations += 1
         print('-' * 6 + "{0:08b}".format(pos) + '-' * 6)
 
 
@@ -55,6 +60,7 @@ class Encoder:
                     theta_whole, theta_decimal = angle.split('.')
                     s = "{0:08b}".format(pos)
                     s += " : "
+                    s += f"{str(self.rotations).rjust(5)} + "
                     s += f"{theta_whole.rjust(3)}."
                     s += f"{theta_decimal.ljust(5)}"
                     print(s)

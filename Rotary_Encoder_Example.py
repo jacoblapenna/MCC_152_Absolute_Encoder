@@ -25,8 +25,7 @@ class Encoder:
 
         # get initial offset
         self._bcd_offset = self._g2b_hashmap[self._mcc152.dio_input_read_port()]
-        self.cw_position = 0.0
-        self.ccw_position = 0.0
+        self.position = 0.0
 
 
     def _g2b(self, num):
@@ -62,7 +61,7 @@ class Encoder:
         if self.rotations < 0:
             self.position -= abs(self.rotations * 360) - bcd - self._bcd_offset
         else:
-            self.position = bcd - ((self.rotations * 360) - self._bcd_offset)
+            self.position = (bcd + self.rotations * 360) - self._bcd_offset
         self._show_angle()
 
 

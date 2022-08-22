@@ -1,5 +1,7 @@
 from daqhats import mcc152, HatError, HatIDs, hat_list, DIOConfigItem, interrupt_callback_enable
 
+import time
+
 class Encoder:
 
     def __init__(self, resolution=256):
@@ -53,6 +55,7 @@ class Encoder:
             self.rotations -= 1
         elif bcd == 0:
             self.rotations += 1
+        time.sleep(5)
 
 
     def _show_angle(self):

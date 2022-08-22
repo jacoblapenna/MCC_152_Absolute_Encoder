@@ -55,7 +55,6 @@ class Encoder:
             self.rotations -= 1
         elif bcd == 0:
             self.rotations += 1
-        time.sleep(5)
 
 
     def _show_angle(self):

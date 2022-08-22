@@ -7,7 +7,7 @@ class Encoder:
     def __init__(self, resolution=256):
 
         # instantiate DAQ
-        self._mcc152 = mcc152(1) # detect address first in production
+        self._mcc152 = mcc152(1) # update to your correct address here
 
         # create instance attributes
         self.direction = None # None, "CCW", or "CW"

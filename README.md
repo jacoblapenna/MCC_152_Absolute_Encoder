@@ -1,1 +1,1 @@
-Quick example for using a MCC-152 DAQ hat with a TRD-NA256NWD 8-bit absolute rotary encoder from Automation Direct.
+Quick example for using a [MCC-152 DAQ hat](https://www.mccdaq.com/DAQ-HAT/MCC-152.aspx) with a [TRD-NA256NWD](https://www.automationdirect.com/adc/shopping/catalog/sensors_-z-_encoders/encoders/rotary_encoders/trd-na256nwd) 8-bit absolute rotary encoder from Automation Direct. Requires the [daqhats package](https://github.com/mccdaq/daqhats). Make sure the MCC-152's address is correct within the Encoder's initialization function.

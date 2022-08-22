@@ -44,7 +44,7 @@ class Encoder:
             self.rotations -= 1
         elif pos == 0:
             self.rotations += 1
-        #print('-' * 6 + "{0:08b}".format(pos) + '-' * 6)
+        print('-' * 8 + f"{pos}".rjust(3) + '-' * 8)
 
 
     def track_rotation(self):

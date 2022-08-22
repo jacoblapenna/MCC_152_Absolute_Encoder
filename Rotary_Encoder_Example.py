@@ -59,7 +59,7 @@ class Encoder:
 
     def _update_position(self, bcd):
         self.position = bcd - self._bcd_offset
-        self._show_angle(self)
+        self._show_angle()
 
 
     def track_rotation(self):

@@ -1,35 +1,65 @@
-from daqhats import mcc152, HatError, HatIDs, hat_list, DIOConfigItem
+from daqhats import mcc152, HatError, HatIDs, hat_list, DIOConfigItem, interrupt_callback_enable
 
-# create hat instance for rotary encoder
-re = mcc152(1)
-re.dio_reset()
-# pull-up resistor inverts input
-re.dio_config_write_port(DIOConfigItem.INPUT_INVERT, 255)
-last_pos = None
+class Encoder:
 
-def g2b(num):
-    num ^= num >> 4
-    num ^= num >> 2
-    num ^= num >> 1
-    return num
+    def __init__(self, resolution=256):
 
-d_theta_degrees = 360/256
-g2b_hashmap = {g : g2b(g) for g in range(256)}
+        # instantiate DAQ
+        self._mcc152 = mcc152(1) # detect address first in production
 
-try:
-    while True:
-        pos = re.dio_input_read_port()
-        bcd = g2b_hashmap[pos]
-        if bcd == last_pos:
-            pass
-        else:
-            angle = str(round(bcd * d_theta_degrees, 5))
-            theta_whole, theta_decimal = angle.split('.')
-            s = "{0:08b}".format(pos)
-            s += " : "
-            s += f"{theta_whole.rjust(3)}."
-            s += f"{theta_decimal.ljust(5)}"
-            print(s)
-            last_pos = bcd
-except KeyboardInterrupt:
-    pass
+        # create instance attributes
+        self.direction = None # None, "CCW", or "CW"
+        self.resolution = resolution
+        self.d_theta_degrees = d_theta_degrees = 360/self.resolution
+        self._g2b_hashmap = {g : self._g2b(g) for g in range(self.resolution)}
+
+        # set interupt callback
+        interrupt_callback_enable(self._count_rev, self.direction)
+
+        # initialize DAQ
+        self._mcc152.dio_reset()
+        self._mcc152.dio_config_write_port(DIOConfigItem.INPUT_INVERT, 255)
+        self._mcc152.dio_config_write_bit(7, DIOConfigItem.INT_MASK, 0)
+
+
+        def _g2b(self, num):
+            """
+            Private method to convert a gray coded integer to a binary coded integer.
+            """
+            num ^= num >> 4
+            num ^= num >> 2
+            num ^= num >> 1
+            return num
+
+
+        def _count_rev(self, direction):
+            """
+            One revolution occurs when the MSB goes high to low.
+            This is a + rotation if
+            """
+            print('-' * 20)
+
+
+        def track_rotation(self):
+            last_pos = None
+            try:
+                while True:
+                    pos = self._mcc152.dio_input_read_port()
+                    bcd = self._g2b_hashmap[pos]
+                    if bcd == last_pos:
+                        pass
+                    else:
+                        angle = str(round(bcd * self.d_theta_degrees, 5))
+                        theta_whole, theta_decimal = angle.split('.')
+                        s = "{0:08b}".format(pos)
+                        s += " : "
+                        s += f"{theta_whole.rjust(3)}."
+                        s += f"{theta_decimal.ljust(5)}"
+                        print(s)
+                        last_pos = bcd
+            except KeyboardInterrupt:
+                return
+
+if __name__ == '__main__':
+    encoder = Encoder()
+    encoder.track_rotation()
